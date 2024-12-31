@@ -1,0 +1,77 @@
+Style/Documentation:
+  Enabled: false
+Layout/MultilineArrayBraceLayout:
+  Enabled: false
+Layout/MultilineAssignmentLayout:
+  Enabled: false
+Layout/MultilineBlockLayout:
+  Enabled: false
+Layout/MultilineHashBraceLayout:
+  Enabled: false
+Layout/MultilineMethodCallBraceLayout:
+  Enabled: false
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+Layout/MultilineMethodDefinitionBraceLayout:
+  Enabled: false
+Layout/MultilineOperationIndentation:
+  Enabled: false
+Layout/ParameterAlignment:
+  Enabled: false
+Layout/RescueEnsureAlignment:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Max: 60
+Metrics/MethodLength:
+  Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
+Metrics/ParameterLists:
+  Enabled: true
+  Max: 7
+Metrics/PerceivedComplexity:
+  Enabled: false
+Layout/SpaceAfterNot:
+  Enabled: false
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+Layout/SpaceInLambdaLiteral:
+  Enabled: false
+Lint/AmbiguousRegexpLiteral:
+  Enabled: false
+Lint/AssignmentInCondition:
+  Enabled: false
+Lint/NonLocalExitFromIterator:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+  Max: 60
+Metrics/ClassLength:
+  Enabled: false
+Layout/LineLength:
+  AllowedPatterns:
+    - ^\s*#
+    - ^\s*([a-zA-Z]*[lL]og[a-zA-Z]*)[ (]
+    - ^\s*['"]
+    - .*#.{30,300}
+    - ^\s*[a-z_]:\s*".+",?[}\s]*$
+  Max: 200
+  Exclude:
+    - '*/spec/**/*.rb '# Nicer to have sample data on a single long line
+    - 'spec/**/*.rb'
+Layout/LineContinuationLeadingSpace:
+  Enabled: true
+  Exclude:
+    - '*/spec/**/*.rb ' # Just a pain for specs that contain lots of sample data.
+    - 'spec/**/*.rb'
+Metrics/BlockLength:
+  Exclude:
+    - Rakefile
+    - '**/*.rake'
+    - config/routes.rb
+    - '*/spec/**/*.rb' # Some blocks can be really long with sample data
+    - 'spec/**/*.rb'
+  Max: 200
+AllCops:
+  NewCops: disable
+
