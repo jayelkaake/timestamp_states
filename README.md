@@ -14,12 +14,8 @@ If bundler is not being used to manage dependencies, install the gem by executin
     $ gem install timestamp_states
 
 ## Usage
-
-Just add a `_at` column to your DB and `timestamp_state :column_name` to your model and get a bunch of magic methods.
-
-Example:
-`bundle exec rails g migration AddPublishedAtToProducts published_at:datetime && bundle exec rails db:migrate`
-then add `timestamp_state :published_at` to your Product model
+1. Add `_at` column to your DB if it doesn't already exist. Example: `bundle exec rails g migration AddPublishedAtToProducts published_at:datetime && bundle exec rails db:migrate`
+2. Add `timestamp_state :column_name` to your model. Example: `timestamp_state :published_at`
 
 
 ### Model methods:

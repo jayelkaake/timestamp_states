@@ -8,10 +8,10 @@ Gem::Specification.new do |spec|
   spec.authors = ['Jay El-Kaake']
   spec.email = ['najibkaake@gmail.com']
 
-  spec.summary = 'Gives Rails models nice methods for managing timestamp states.'
+  spec.summary = 'Gives Rails models nice methods for managing columns that define a timestamp that represents a state such as `published_at` => `published?`.'
   spec.homepage = 'https://www.github.com/jayelkaake/timestamp_states'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 3.0.0'
+  spec.required_ruby_version = '>= 2.7'
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://www.github.com/jayelkaake/timestamp_states'
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry', '~> 0.15'
   spec.add_development_dependency 'rspec', '~> 3'
   spec.add_development_dependency 'rubocop', '~> 1.69'
-  spec.add_development_dependency 'sqlite3', '~> 2.5'
+  spec.add_development_dependency 'sqlite3', '>= 1'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

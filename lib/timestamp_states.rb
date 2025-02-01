@@ -29,7 +29,7 @@ module TimestampStates
   end
 
   module ClassMethods
-    def timestamp_state_configs = @timestamp_state_configs
+    def timestamp_state_configs; @timestamp_state_configs; end
 
     def add_timestamp_state_config(column)
       @timestamp_state_configs ||= {}
@@ -37,7 +37,9 @@ module TimestampStates
       yield(@timestamp_state_configs[column])
     end
 
-    def timestamp_state_config_aliases = @timestamp_state_config_aliases
+    def timestamp_state_config_aliases
+      @timestamp_state_config_aliases
+    end
 
     ##
     # @param [Symbol] column The name of the column to define timestamp states for. Example: `:published_at`, `:archived_at`, etc
@@ -49,14 +51,19 @@ module TimestampStates
       add_timestamp_state_config(column) do |config|
         config[:words] = config[:words].to_h.merge(words)
         config[:words][:past] ||= column.to_s.gsub(/_at$/, '').to_sym
-        config[:words][:action] ||= column.to_s
+        config[:words][:action] ||= {
+          enqueued: :enqueue,
+        }[config[:words][:past]]
+          config[:words][:action] ||= column.to_s
                                           .sub(/_at$/, '')
-                                          .sub(/d$/, '')
-                                          .sub(/([^tvklur])e$/, '\1') # spellr:disable-line
+                                          .sub(/lled$/, 'll')
+                                          .sub(/failed$/, 'fail')
+                                          .sub(/ted$/, 't')
+                                          .sub(/eeded$/, 'eed')
+                                          .sub(/([^tvklure])ed$/, '\1') # spellr:disable-line
                                           .sub(/lle$/, 'l')
                                           .sub(/tte$/, 't')
                                           .sub(/pp$/, 'p').to_sym
-        config[:words][:action] = config[:words][:past].to_s.gsub(/ed$/, '').to_sym if config[:words][:past].to_s =~ /^(install|fail)ed$/ # Weird edge case I guess
         config[:words][:past_not] ||= "not_#{config[:words][:past]}".to_sym
         config[:words][:not_action] ||= "un#{config[:words][:action]}".to_sym
 
@@ -73,7 +80,7 @@ module TimestampStates
 
         define_model_callbacks action_word, not_action_word
 
-        Array(aliases).each { |alias_name| alias_timestamp_state(column, alias_name, define_scopes: define_scopes) }
+        Array(aliases).each { |alias_name| alias_timestamp_state(alias_name, column, define_scopes: define_scopes) }
       end
     end
 
@@ -83,19 +90,19 @@ module TimestampStates
       columns.each { |column| timestamp_state(column, **options) }
     end
 
-    def alias_timestamp_state(column, alias_name, define_scopes: true)
+    def alias_timestamp_state(alias_name, column, define_scopes: true)
       @timestamp_state_config_aliases ||= {}
       @timestamp_state_config_aliases[column] ||= []
       @timestamp_state_config_aliases[column] << alias_name unless @timestamp_state_config_aliases[column].include?(alias_name)
 
       alias_attribute alias_name, column # ensure the attribute is aliased as well
 
-      has_timestamp_state(alias_name, define_scopes: define_scopes)
+      timestamp_state(alias_name, define_scopes: define_scopes)
     end
   end
 
   def method_missing(method_name, *args, &block)
-    self.class.timestamp_state_configs.to_h.each do |column, options|
+    self.class.base_class.timestamp_state_configs.to_h.each do |column, options|
       return timestamp_state?(column) if method_name.to_s == "#{options[:words][:past]}?" || method_name.to_s == options[:words][:past].to_s
       return !timestamp_state?(column) if method_name.to_s == "#{options[:words][:past_not]}?" || method_name.to_s == options[:words][:past_not].to_s
       return touch_timestamp_state(column) if method_name.to_s == options[:words][:action].to_s
@@ -110,7 +117,7 @@ module TimestampStates
   end
 
   def respond_to_missing?(method_name, include_private = false)
-    self.class.timestamp_state_configs.to_h.each_value do |options|
+    self.class.base_class.timestamp_state_configs.to_h.each_value do |options|
       return true if method_name.to_s == "#{options[:words][:past]}?" || method_name.to_s == options[:words][:past].to_s
       return true if method_name.to_s == options[:words][:action].to_s || method_name.to_s == "#{options[:words][:action]}!"
       return true if method_name.to_s == options[:words][:not_action].to_s || method_name.to_s == "#{options[:words][:not_action]}!"
@@ -123,7 +130,7 @@ module TimestampStates
   private
 
   def timestamp_state_configs
-    self.class.timestamp_state_configs.to_h.map do |column, options|
+    self.class.base_class.timestamp_state_configs.to_h.map do |column, options|
       timestamp_state?(column) ? options[:past] : nil
     end.compact
   end
@@ -133,7 +140,7 @@ module TimestampStates
 
     # What we're doing here is nesting each callback inside the next callback, then ending by
     # calling the pram block to trigger the actual save.
-    self.class.timestamp_state_configs.to_h.each do |column, options|
+    self.class.base_class.timestamp_state_configs.to_h.each do |column, options|
       callbacks.unshift(-> { run_callbacks(options[:words][:action]) { callbacks.shift.try(:call) } }) if !timestamp_state_previously_set?(column) && timestamp_state?(column)
     end.compact
 
