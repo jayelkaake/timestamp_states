@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    timestamp_states (1.0.0)
+    timestamp_states (1.0.1)
       activesupport (>= 5)
       rails (>= 5)
 
@@ -174,7 +174,7 @@ GEM
       date
       stringio
     racc (1.8.1)
-    rack (3.1.9)
+    rack (3.1.12)
     rack-session (2.1.0)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -281,7 +281,7 @@ DEPENDENCIES
   pry
   pry-byebug
   pry-rails
-  rake (~> 13.0)
+  rack (>= 3.1.12)
   rspec (~> 3)
   rubocop (~> 1.69)
   sqlite3 (>= 1)
