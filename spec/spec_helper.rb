@@ -2,7 +2,15 @@
 
 require 'timestamp_states'
 require 'anonymous_active_record'
-require 'pry'
+
+require 'dotenv/load'
+
+if ENV['DEV_MODE']
+  require 'pry'
+  require 'pry-rails'
+  require 'pry-byebug'
+end
+
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

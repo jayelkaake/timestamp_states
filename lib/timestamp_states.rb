@@ -141,14 +141,16 @@ module TimestampStates
     # What we're doing here is nesting each callback inside the next callback, then ending by
     # calling the pram block to trigger the actual save.
     self.class.base_class.timestamp_state_configs.to_h.each do |column, options|
-      callbacks.unshift(-> { run_callbacks(options[:words][:action]) { callbacks.shift.try(:call) } }) if !timestamp_state_previously_set?(column) && timestamp_state?(column)
+      if !timestamp_state_previously_set?(column) && timestamp_state?(column)
+        callbacks.unshift(-> { run_callbacks(options[:words][:action]) { callbacks.shift.try(:call) } })
+      end
     end.compact
 
     callbacks.shift.try(:call)
   end
 
   def timestamp_state_previously_set?(column)
-    previous_changes[column].to_a.first.present?
+    changes[column].to_a.first.present?
   end
 
   def set_timestamp_state(column, value)

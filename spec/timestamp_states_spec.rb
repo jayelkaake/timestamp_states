@@ -116,6 +116,27 @@ describe TimestampStates do
         }.from(nil).to(1).and change {
           reactions[:after_around]
         }.from(nil).to(1)
+
+        expect do
+          model.install!
+        end.not_to change {
+          reactions
+        }
+
+        model.uninstall!
+        reactions = {} # reset reactions
+
+        expect do
+          model.install!
+        end.to change {
+          reactions[:after]
+        }.from(nil).to(1).and change {
+          reactions[:before]
+        }.from(nil).to(1).and change {
+          reactions[:before_around]
+        }.from(nil).to(1).and change {
+          reactions[:after_around]
+        }.from(nil).to(1)
       end
     end
   end
