@@ -42,13 +42,6 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      - name: Set up database
-        env:
-          RAILS_ENV: test
-        run: |
-          bin/rails db:create
-          bin/rails db:schema:load
-
       - name: Run RSpec tests
         env:
           RAILS_ENV: test
