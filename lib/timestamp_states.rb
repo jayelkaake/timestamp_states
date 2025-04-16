@@ -150,7 +150,11 @@ module TimestampStates
   end
 
   def timestamp_state_previously_set?(column)
-    changes[column].to_a.first.present?
+    if changes.key?(column)
+      changes[column].to_a.first.present?
+    else
+      timestamp_state?(column)
+    end
   end
 
   def set_timestamp_state(column, value)

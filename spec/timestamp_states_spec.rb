@@ -21,6 +21,7 @@ describe TimestampStates do
     ActiveRecord::Schema.define do
       create_table :example_models, force: true do |t|
         t.datetime :installed_at
+        t.text :other_column
       end
     end
   end
@@ -137,6 +138,12 @@ describe TimestampStates do
         }.from(nil).to(1).and change {
           reactions[:after_around]
         }.from(nil).to(1)
+
+        # Saving other attributes doesn't trigger the callbacks
+        expect do
+          model.other_column = SecureRandom.uuid
+          model.save!
+        end.not_to change{ reactions }
       end
     end
   end
